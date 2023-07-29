@@ -1,0 +1,175 @@
+<!DOCTYPE html><html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="theme-color" content="#375EAB"/>
+
+  <title>src/gen/\/getidl.go - GoPages</title>
+
+<link type="text/css" rel="stylesheet" href="/lib/godoc/style.css"/>
+
+<script>window.initFuncs = [];</script>
+<script src="/lib/godoc/jquery.js" defer=""></script>
+
+
+
+
+<script>var goVersion = "go1.20.3";</script>
+<script src="/lib/godoc/godocs.js" defer=""></script>
+
+</head>
+<body>
+
+<div id="lowframe" style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="/pkg/gen/">GoPages | Auto-generated docs</a></div>
+<div class="top-heading" id="heading-narrow"><a href="/pkg/gen/">GoPages</a></div>
+<a href="#" id="menu-button"><span id="menu-button-arrow">▽</span></a>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Source file
+    <a href="/src">src</a>/<a href="/src/gen">gen</a>/<a href="/src/gen/\">\</a>/<span class="text-muted">getidl.go</span>
+  </h1>
+
+
+
+
+
+  <h2>
+    Documentation: <a href="/pkg/gen/\">gen/\</a>
+  </h2>
+
+
+
+<div id="nav"></div>
+
+
+<script type="text/javascript">document.ANALYSIS_DATA = null;</script>
+<pre><span id="L1" class="ln">     1  </span>package main
+<span id="L2" class="ln">     2  </span>
+<span id="L3" class="ln">     3  </span>import (
+<span id="L4" class="ln">     4  </span>	&#34;fmt&#34;
+<span id="L5" class="ln">     5  </span>	&#34;io/ioutil&#34;
+<span id="L6" class="ln">     6  </span>	&#34;log&#34;
+<span id="L7" class="ln">     7  </span>	&#34;time&#34;
+<span id="L8" class="ln">     8  </span>
+<span id="L9" class="ln">     9  </span>	&#34;gorm.io/driver/postgres&#34;
+<span id="L10" class="ln">    10  </span>	&#34;gorm.io/gorm&#34;
+<span id="L11" class="ln">    11  </span>)
+<span id="L12" class="ln">    12  </span>
+<span id="L13" class="ln">    13  </span>type BaseModel struct {
+<span id="L14" class="ln">    14  </span>	ID        string    `gorm:&#34;type:uuid;primaryKey;default:uuid_generate_v4()&#34;`
+<span id="L15" class="ln">    15  </span>	CreatedAt time.Time `gorm:&#34;autoCreateTime&#34;`
+<span id="L16" class="ln">    16  </span>	UpdatedAt time.Time `gorm:&#34;autoUpdateTime&#34;`
+<span id="L17" class="ln">    17  </span>}
+<span id="L18" class="ln">    18  </span>
+<span id="L19" class="ln">    19  </span><span class="comment">// The gorm model for Microservice table from postgres database</span>
+<span id="L20" class="ln">    20  </span>type Microservice struct {
+<span id="L21" class="ln">    21  </span>	BaseModel
+<span id="L22" class="ln">    22  </span>	Svcname  string    `gorm:&#34;unique;column:svcname&#34;`
+<span id="L23" class="ln">    23  </span>	Versions []Version `gorm:&#34;foreignKey:MicroserviceId&#34;`
+<span id="L24" class="ln">    24  </span>}
+<span id="L25" class="ln">    25  </span>
+<span id="L26" class="ln">    26  </span>func (Microservice) TableName() string {
+<span id="L27" class="ln">    27  </span>	return &#34;Microservice&#34;
+<span id="L28" class="ln">    28  </span>}
+<span id="L29" class="ln">    29  </span>
+<span id="L30" class="ln">    30  </span><span class="comment">// The gorm model for Version table from postgres database</span>
+<span id="L31" class="ln">    31  </span>type Version struct {
+<span id="L32" class="ln">    32  </span>	BaseModel
+<span id="L33" class="ln">    33  </span>	Vname          string       `gorm:&#34;column:vname&#34;`
+<span id="L34" class="ln">    34  </span>	Upstreamurl    string       `gorm:&#34;column:upstreamurl&#34;`
+<span id="L35" class="ln">    35  </span>	Idlfile        []byte       `gorm:&#34;column:idlfile&#34;`
+<span id="L36" class="ln">    36  </span>	Idlname        string       `gorm:&#34;column:idlname&#34;`
+<span id="L37" class="ln">    37  </span>	MicroserviceId string       `gorm:&#34;column:microserviceId&#34;`
+<span id="L38" class="ln">    38  </span>	Microservice   Microservice `gorm:&#34;foreignKey:MicroserviceId&#34;`
+<span id="L39" class="ln">    39  </span>}
+<span id="L40" class="ln">    40  </span>
+<span id="L41" class="ln">    41  </span>func (Version) TableName() string {
+<span id="L42" class="ln">    42  </span>	return &#34;Version&#34;
+<span id="L43" class="ln">    43  </span>}
+<span id="L44" class="ln">    44  </span>
+<span id="L45" class="ln">    45  </span><span class="comment">// Download IDL files and retrieve the information of services shwoon</span>
+<span id="L46" class="ln">    46  </span>func GetIDL() (GatewayInfo, []ServiceInfo) {
+<span id="L47" class="ln">    47  </span>	dsn := &#34;host=127.0.0.1 user=postgres password=mysecretpassword dbname=mydatabase port=5432 sslmode=disable&#34;
+<span id="L48" class="ln">    48  </span>	db, err := gorm.Open(postgres.Open(dsn), &amp;gorm.Config{})
+<span id="L49" class="ln">    49  </span>	if err != nil {
+<span id="L50" class="ln">    50  </span>		panic(&#34;Failed to connect to database: &#34; + err.Error())
+<span id="L51" class="ln">    51  </span>	}
+<span id="L52" class="ln">    52  </span>
+<span id="L53" class="ln">    53  </span>	<span class="comment">//Access the underlying sql.DB</span>
+<span id="L54" class="ln">    54  </span>	sqlDB, err := db.DB()
+<span id="L55" class="ln">    55  </span>	if err != nil {
+<span id="L56" class="ln">    56  </span>		panic(&#34;Failed to get *sql.DB instance: &#34; + err.Error())
+<span id="L57" class="ln">    57  </span>	}
+<span id="L58" class="ln">    58  </span>
+<span id="L59" class="ln">    59  </span>	var microservices []Microservice
+<span id="L60" class="ln">    60  </span>
+<span id="L61" class="ln">    61  </span>	<span class="comment">// Retrieve microservices from the database</span>
+<span id="L62" class="ln">    62  </span>	result := db.Preload(&#34;Versions&#34;).Find(&amp;microservices)
+<span id="L63" class="ln">    63  </span>
+<span id="L64" class="ln">    64  </span>	if result.Error != nil {
+<span id="L65" class="ln">    65  </span>		panic(&#34;Failed to retrieve Microservice entries: &#34; + result.Error.Error())
+<span id="L66" class="ln">    66  </span>	}
+<span id="L67" class="ln">    67  </span>
+<span id="L68" class="ln">    68  </span>	for _, microservice := range microservices {
+<span id="L69" class="ln">    69  </span>		fmt.Printf(&#34;ID: %s, Svcname: %s\n&#34;, microservice.BaseModel.ID, microservice.Svcname)
+<span id="L70" class="ln">    70  </span>		for _, version := range microservice.Versions {
+<span id="L71" class="ln">    71  </span>			fmt.Printf(&#34;Version ID: %s, Vname: %s\n&#34;, version.BaseModel.ID, version.Vname)
+<span id="L72" class="ln">    72  </span>			data := version.Idlfile
+<span id="L73" class="ln">    73  </span>			err := ioutil.WriteFile(&#34;idl/&#34;+version.Idlname, data, 0644)
+<span id="L74" class="ln">    74  </span>			if err != nil {
+<span id="L75" class="ln">    75  </span>				log.Fatal(err)
+<span id="L76" class="ln">    76  </span>			}
+<span id="L77" class="ln">    77  </span>		}
+<span id="L78" class="ln">    78  </span>	}
+<span id="L79" class="ln">    79  </span>
+<span id="L80" class="ln">    80  </span>	err = sqlDB.Close()
+<span id="L81" class="ln">    81  </span>	if err != nil {
+<span id="L82" class="ln">    82  </span>		panic(&#34;Failed to close database connection: &#34; + err.Error())
+<span id="L83" class="ln">    83  </span>	}
+<span id="L84" class="ln">    84  </span>
+<span id="L85" class="ln">    85  </span>	gatewayinfo := GatewayInfo{
+<span id="L86" class="ln">    86  </span>		GatewayURL:  &#34;0.0.0.0:8888&#34;,
+<span id="L87" class="ln">    87  </span>		ETCD_URL:    &#34;0.0.0.0:20000&#34;,
+<span id="L88" class="ln">    88  </span>		GatewayName: &#34;example&#34;,
+<span id="L89" class="ln">    89  </span>	}
+<span id="L90" class="ln">    90  </span>
+<span id="L91" class="ln">    91  </span>	services := []ServiceInfo{}
+<span id="L92" class="ln">    92  </span>
+<span id="L93" class="ln">    93  </span>	for i, service := range microservices {
+<span id="L94" class="ln">    94  </span>		index := i + 1
+<span id="L95" class="ln">    95  </span>		fmt.Print(&#34;IDL &#34; + fmt.Sprint(index) + &#34;: &#34; + service.Versions[len(service.Versions)-1].Idlname + &#34;\n&#34;)
+<span id="L96" class="ln">    96  </span>		toadd := ServiceInfo{
+<span id="L97" class="ln">    97  </span>			IDLName:             service.Versions[len(service.Versions)-1].Idlname, <span class="comment">//to be replaced by data from postgres</span>
+<span id="L98" class="ln">    98  </span>			ServiceUpstreamURL:  service.Versions[len(service.Versions)-1].Upstreamurl,
+<span id="L99" class="ln">    99  </span>			Load_Balancing_Type: &#34;ROUND_ROBIN&#34;,
+<span id="L100" class="ln">   100  </span>		}
+<span id="L101" class="ln">   101  </span>
+<span id="L102" class="ln">   102  </span>		services = append(services, toadd)
+<span id="L103" class="ln">   103  </span>	}
+<span id="L104" class="ln">   104  </span>
+<span id="L105" class="ln">   105  </span>	return gatewayinfo, services
+<span id="L106" class="ln">   106  </span>}
+<span id="L107" class="ln">   107  </span>
+</pre><p></p>
+
+<div id="footer">
+Build version go1.20.3.<br/>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+
+
+</body></html>

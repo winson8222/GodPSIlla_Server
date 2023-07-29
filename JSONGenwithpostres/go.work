@@ -1,0 +1,25 @@
+go 1.20
+
+use .
+
+use ./create
+
+use ./update
+
+use ./hz_gen
+
+use ./idl_gen
+
+use ./gateway
+
+use ./serverstart
+
+use ./shutdown
+
+use ./nstart
+
+use ./nstop
+
+use ./nupdate
+
+use ./del
