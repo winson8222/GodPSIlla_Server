@@ -68,7 +68,7 @@ func main() {
 			log.Fatal("move to nginx folder failed")
 		}
 
-		cmd := exec.Command("nginx", "-c", path+"/nginx.conf")
+		cmd := exec.Command("./nginx.exe", "-c", path+"/nginx.conf")
 
 		err = cmd.Start()
 		if err != nil {

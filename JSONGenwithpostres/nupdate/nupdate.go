@@ -43,7 +43,7 @@ func NReload() {
 			log.Fatal("move to nginx folder failed")
 		}
 
-		cmd = exec.Command("nginx", "-s", "reload", "-c", path+"/nginx.conf")
+		cmd = exec.Command("./nginx.exe", "-s", "reload", "-c", path+"/nginx.conf")
 
 		err = cmd.Start()
 		if err != nil {
