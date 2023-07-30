@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/JSONGenwithpostres.iml" filepath="$PROJECT_DIR$/.idea/JSONGenwithpostres.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Gateway-Generator.iml" filepath="$PROJECT_DIR$/.idea/Gateway-Generator.iml" />
     </modules>
   </component>
 </project>

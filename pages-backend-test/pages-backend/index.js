@@ -328,7 +328,7 @@ app.post("/start", async (req, res) => {
       __dirname,
       "..",
       "..",
-      "/JSONGenwithpostres/serverstart"
+      "/Gateway-Generator/serverstart"
     );
 
     let child = spawn("./serverstart", [8888, 8889, 8890], { cwd: parentDirServerStart });
@@ -363,7 +363,7 @@ app.post("/start", async (req, res) => {
       __dirname,
       "..",
       "..",
-      "/JSONGenwithpostres/nstart"
+      "/Gateway-Generator/nstart"
     );
 
     const osType = os.platform();
@@ -414,7 +414,7 @@ app.post("/stop", async (req, res) => {
       __dirname,
       "..",
       "..",
-      "/JSONGenwithpostres/shutdown"
+      "/Gateway-Generator/shutdown"
     );
 
     const osType = os.platform();
@@ -457,7 +457,7 @@ app.post("/stop", async (req, res) => {
       __dirname,
       "..",
       "..",
-      "/JSONGenwithpostres/nstop"
+      "/Gateway-Generator/nstop"
     );
 
     console.log("os is " + osType);
@@ -511,7 +511,7 @@ app.post("/update", async (req, res) => {
         __dirname,
         "..",
         "..",
-        "/JSONGenwithpostres/update"
+        "/Gateway-Generator/update"
       );
 
 
@@ -557,7 +557,7 @@ app.post("/update", async (req, res) => {
   }
 });
 
-//generate the gateway in JSONGenwithpostres/gateway using ./gen
+//generate the gateway in Gateway-Generator/gateway using ./gen
 app.post("/gen", async (req, res) => {
   try {
     const form = new formidable.IncomingForm();
@@ -573,7 +573,7 @@ app.post("/gen", async (req, res) => {
       const { url, lb } = fields;
       const platform = os.platform();
 
-      const parentDir = path.join(__dirname, "..", "..", "/JSONGenwithpostres");
+      const parentDir = path.join(__dirname, "..", "..", "/Gateway-Generator");
       let child;
 
       if (platform === "win32") {
@@ -622,7 +622,7 @@ app.post("/del", async (req, res) => {
       __dirname,
       "..",
       "..",
-      "/JSONGenwithpostres/del"
+      "/Gateway-Generator/del"
     );
     const platform = os.platform();
 
