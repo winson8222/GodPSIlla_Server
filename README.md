@@ -56,7 +56,7 @@ pages-backend-test contains the backend server for interacting with the database
 2. Node.js is installed
 3. Nginx is installed
 4. Prisma installed globally using `npm install -g prisma`
-5. No process is running on ports 8888, 8889, 8890, 20000, 5432, 3000, 3333 (Will make improvements to the customisability in the future)
+5. No process is running on ports 8888, 8889, 8890, 20000, 20001, 20002, 5432, 3000, 3333 (Will make improvements to the customisability in the future)
 
 ## Troubleshooting:
 #### File Related:

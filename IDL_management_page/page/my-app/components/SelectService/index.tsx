@@ -153,10 +153,6 @@ export default function SelectServiceComponent(props: any) {
         console.error(error);
         setStarting(false)
         // Handle any errors that occur during the operation
-      } finally {
-
-       
-      //   router.push(Routes.HOME);
       }
 
       console.log("started")
@@ -278,6 +274,7 @@ export default function SelectServiceComponent(props: any) {
           } else if (num < 0 || num > 65536) {
             toast.error('Please enter a port number between 0 and 65536.');
           } else {
+            const id = toast.loading("Generating Gateway... Please do not leave this page")
             setisProcessingDone(true)
             e.preventDefault();
             setLoading(true);
@@ -302,22 +299,23 @@ export default function SelectServiceComponent(props: any) {
                   localStorage.setItem("port", url)
                   setsuccess("Gateway Generated")
                   setgenerated(true);
+                  toast.update(id, {render: "Gateway Generated", type: "success", isLoading: false, autoClose: 5000})
                 }
                 // Handle the upload success
               })
               .catch((error) => {
                 console.log(error); //POSSIBLE ERRORS: NOT UNIQUE SVC NAME
                 setLoading(false);
-                
+                setsuccess("Error")
+                toast.update(id, {render: "Gateway Generation Error", type: "error", isLoading: false, autoClose: 5000})
                 // Handle the upload error
               });
         
               // After the operation is complete, navigate to the new version page
             } catch (error) {
               console.error(error);
+              toast.update(id, {render: "Gateway Generation Error", type: "error", isLoading: false, autoClose: 5000})
               // Handle any errors that occur during the operation
-            } finally {
-            //   router.push(Routes.HOME);
             }
           }
         } else {
