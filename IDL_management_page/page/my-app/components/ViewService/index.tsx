@@ -46,13 +46,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
           const toastId = toast.success('Service deleted successfully');
 
-          const redirectInterval = setInterval(() => {
-            if (!toast.isActive(toastId)) {
-              // If the toast message is no longer displayed, clear the interval and redirect to '/'
-              clearInterval(redirectInterval);
-              router.push('/');
-            }
-          }, 500);
+          router.push('/');
         }
       })
       .catch((error) => {

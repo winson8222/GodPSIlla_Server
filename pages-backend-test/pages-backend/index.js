@@ -507,6 +507,7 @@ app.post("/update", async (req, res) => {
         throw new Error(err.message)
       }
       const { url, lb } = fields;
+      console.log("The url for update is: " + url)
       const parentDir = path.join(
         __dirname,
         "..",
@@ -520,9 +521,9 @@ app.post("/update", async (req, res) => {
       let child 
       console.log("os is " + platform)
       if (platform === "win32") {
-        child = spawn("./update.exe", ["any", lb], { cwd: parentDir });
+        child = spawn("./update.exe", [url, lb], { cwd: parentDir });
       } else {
-        child = spawn("./update", ["any", lb], { cwd: parentDir });
+        child = spawn("./update", [url, lb], { cwd: parentDir });
       }
         
 

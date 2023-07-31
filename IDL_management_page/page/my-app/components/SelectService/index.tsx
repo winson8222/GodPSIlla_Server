@@ -288,7 +288,6 @@ export default function SelectServiceComponent(props: any) {
             
             
             try {
-                
               // Perform any necessary operations or API calls
               axios
               .post("http://localhost:3333/gen", formData, {
