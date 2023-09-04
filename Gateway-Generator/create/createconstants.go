@@ -114,7 +114,7 @@ http {
 	}
 
 	server {
-		listen {{ .PORT }};
+		listen 80;
 {{- range .Service_Constants }}
 {{- $serviceName := .ServiceName }}
 {{- range .Methods }}

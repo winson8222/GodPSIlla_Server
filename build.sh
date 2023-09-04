@@ -15,6 +15,7 @@ else
     exit 1
 fi
 
+
 #check nginx installation
 if [[ $OSTYPE == 'darwin'* ]]; then
     if nginx -v 2>&1 >/dev/null; then

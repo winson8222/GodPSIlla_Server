@@ -26,12 +26,12 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
     cd pages-backend-test/pages-backend
     node index.js &
-    echo backend stated
+    echo backend started
 
     cd -
     cd IDL_management_page/page/my-app
     npm run dev
-    echo frontend stated
+    echo frontend started
 
 # Check if the operating system is Windows (under WSL)
 elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "win32" ]]; then

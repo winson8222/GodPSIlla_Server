@@ -30,3 +30,13 @@ func Build(name string) {
 	}
 	fmt.Print(name + " created\n")
 }
+
+// Upgrades dependency
+func Upgrade() {
+	cmd := exec.Command("go", "get", "-u", "github.com/choleraehyq/pid")
+	err := cmd.Run()
+	if err != nil {
+		log.Fatalf("Upgrade dependency failed %s\n", err)
+	}
+	fmt.Print("Dependency upgraded")
+}
