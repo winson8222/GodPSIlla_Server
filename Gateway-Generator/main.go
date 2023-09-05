@@ -64,6 +64,7 @@ func main() {
 	}
 
 	create.CreatePSI(allhandlers)
+	create.ConfigMid()
 
 	err = os.Chdir("gateway")
 	if err != nil {

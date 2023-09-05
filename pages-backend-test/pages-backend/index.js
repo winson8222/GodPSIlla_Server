@@ -24,6 +24,7 @@ const __dirname = path.dirname(__filename);
 app.use(cors(corsOptions));
 app.use(express.json());
 
+
 // Register and set up the middleware
 app.use(express.urlencoded({ extended: true }));
 
@@ -330,7 +331,7 @@ app.post("/start", async (req, res) => {
       "..",
       "/Gateway-Generator/serverstart"
     );
-
+    
     let child = spawn("./serverstart", [8888, 8889, 8890], { cwd: parentDirServerStart });
 
     child.on("error", (error) => {
@@ -392,18 +393,54 @@ app.post("/start", async (req, res) => {
     child.on("close", (code) => {
       if (code == 0) {
         console.log("Gateway Started successfully");
-        res.status(200).json({ outcome: "Gateway Started" });
+
       } else {
         console.log("Error generating Gateway");
-        // res.status(500).json({ outcome: "Error Starting Gateway" });
         throw new Error("Error Starting Gateway");
       }
     });
-  } catch (err) {
-    console.error("Error in route:", err);
-    res.status(500).json({ outcome: "Error in route", error: err.message });
-    return;
+  
+
+  let midman  = path.join(
+    __dirname,
+    "..",
+    "..",
+    "/Gateway-Generator/middleman"
+  );
+
+  if (osType === "win32") {
+    child = spawn("./server", { cwd: midman, detached: true });
+  } else {
+    child = spawn("./server", { cwd: midman, detached: true  });
   }
+
+  child.on("error", (error) => {
+    console.error("Error starting child process:", error);
+    // res.status(500).json({outcome: "Error Starting Child Process",error: error.message,});
+      throw new Error(error.message);
+  });
+
+  child.stdout.on("data", (data) => {
+    console.log(data.toString());
+  });
+
+  child.stderr.on("data", (data) => {
+    console.error(data.toString());
+  });
+
+  setTimeout(() => {
+    res.status(200).json({ outcome: "Gateway Started" });
+}, 1000);
+
+  
+
+} catch (err) {
+  console.error("Error in route:", err);
+  res.status(500).json({ outcome: "Error in route", error: err.message });
+  return;
+}
+
+
 });
 
 //shutdown gateway instances on ports 8888 8889 8890 with shutdown
@@ -416,6 +453,16 @@ app.post("/stop", async (req, res) => {
       "..",
       "/Gateway-Generator/shutdown"
     );
+    const form = new formidable.IncomingForm();
+    console.log(req.body.url);
+    console.log(req.body.lb);
+    form.parse(req, async function (err, fields) {
+
+      if (err) {
+        // res.status(400).json({ error: err.message });
+        throw new Error(err.message)
+      }
+      const { url, lb } = fields;
 
     const osType = os.platform();
 
@@ -423,9 +470,9 @@ app.post("/stop", async (req, res) => {
 
     console.log("os is " + osType);
     if (osType === "win32") {
-      child = spawn("./shutdown.exe", [8888, 8889, 8890], { cwd: parentDirShutDown });
+      child = spawn("./shutdown.exe", [8888, 8889, 8890, url], { cwd: parentDirShutDown });
     } else {
-      child = spawn("./shutdown", [8888, 8889, 8890], { cwd: parentDirShutDown });
+      child = spawn("./shutdown", [8888, 8889, 8890, url], { cwd: parentDirShutDown });
     }
 
     child.on("error", (error) => {
@@ -480,6 +527,7 @@ app.post("/stop", async (req, res) => {
     child.stderr.on("data", (data) => {
       console.error(data.toString());
     });
+    
 
     child.on("close", (code) => {
       if (code == 0) {
@@ -490,6 +538,12 @@ app.post("/stop", async (req, res) => {
         // res.status(500).json({ outcome: "Error Stopping Gateway" });
         throw new Error("Error Stopping Gateway")
       }
+    })
+
+
+    
+
+    
     });
   } catch (err) {
     res.status(500).json({ outcome: "Error Stopping Gateway", error: err.message });
@@ -564,7 +618,6 @@ app.post("/gen", async (req, res) => {
     const form = new formidable.IncomingForm();
     console.log(req.body.url);
     console.log(req.body.lb);
-
     form.parse(req, async function (err, fields) {
 
       if (err) {

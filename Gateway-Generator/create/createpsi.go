@@ -8,6 +8,20 @@ import (
 	"unicode"
 )
 
+func ConfigMid() {
+
+	configfile, err := os.Create("middleman/config.txt")
+	if err != nil {
+		log.Fatalf("Error creating middleman config file: %s\n", err)
+	}
+
+	_, err = configfile.WriteString(os.Args[1])
+	if err != nil {
+		log.Fatalf("Error Writing middleman config file: %s\n", err)
+	}
+
+}
+
 func CreatePSI(services []HandlerInfo) {
 	funcs := template.FuncMap{
 		"title": func(s string) string {

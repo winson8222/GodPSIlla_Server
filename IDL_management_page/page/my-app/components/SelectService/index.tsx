@@ -67,46 +67,63 @@ export default function SelectServiceComponent(props: any) {
 
       e.preventDefault();
       setStopping(true);
+      const num = Number(url)
+      if (invalidPorts.includes(num)) {
+        toast.error(`Port is forbidden`);
 
-      try {
-            
-        // Perform any necessary operations or API calls
-        axios
-        .post("http://localhost:3333/stop",)
-        .then((response : any) => {
-          if (response.data.outcome === 'Gateway Stopped') {
-            localStorage.setItem("running", "n")
-            setRunning(false)
-            const toastId = toast.success(`Gateway Stopped Successfully`);
-
-            const redirectInterval = setInterval(() => {
-              
-            if (!toast.isActive(toastId)) {
-              
-                clearInterval(redirectInterval);
-                  
-                }
-              }, 500);
-          }
-        }).then(() => setStopping(false))
-        .catch((error) => {
-          console.log(error); 
-
-          if (error.response) {
-            toast.error('Stopping Gateway failed');
-          }
-          setStopping(false)
-          
-          
-          // Handle the upload error
-        })
-        // After the operation is complete, navigate to the new version page
-      } catch (error) {
-        // Handle any errors that occur during the operation
-        console.log(error)
-      } finally {
+      } else if (num < 0 || num > 65536) {
+        toast.error('Please enter a port number between 0 and 65536.');
+      } else {
+        e.preventDefault();
         
-      //   router.push(Routes.HOME);
+
+        const formData = { url , lb };
+
+      
+
+        try {
+              
+          // Perform any necessary operations or API calls
+          axios
+          .post("http://localhost:3333/stop",formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            }})
+          .then((response : any) => {
+            if (response.data.outcome === 'Gateway Stopped') {
+              localStorage.setItem("running", "n")
+              setRunning(false)
+              const toastId = toast.success(`Gateway Stopped Successfully`);
+
+              const redirectInterval = setInterval(() => {
+                
+              if (!toast.isActive(toastId)) {
+                
+                  clearInterval(redirectInterval);
+                    
+                  }
+                }, 500);
+            }
+          }).then(() => setStopping(false))
+          .catch((error) => {
+            console.log(error); 
+
+            if (error.response) {
+              toast.error('Stopping Gateway failed');
+            }
+            setStopping(false)
+            
+            
+            // Handle the upload error
+          })
+          // After the operation is complete, navigate to the new version page
+        } catch (error) {
+          // Handle any errors that occur during the operation
+          console.log(error)
+        } finally {
+          
+        //   router.push(Routes.HOME);
+        }
       }
 
       console.log("stopped")
