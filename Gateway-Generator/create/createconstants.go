@@ -126,6 +126,10 @@ http {
 		location /ping {
 			proxy_pass http://gateway/ping;
 		}
+
+		location /PSI {
+			proxy_pass http://gateway/PSI;
+		}
 	}
 }
 `

@@ -1,4 +1,4 @@
+ Container hertz_reg_etcd3  Creating
  Container hertz_reg_etcd1  Creating
  Container hertz_reg_etcd2  Creating
- Container hertz_reg_etcd3  Creating
-Error response from daemon: Conflict. The container name "/hertz_reg_etcd2" is already in use by container "9adc927f1f971ce1b2e03feb985819186ddfdbd35253cb96cd15ed30b0a1818f". You have to remove (or rename) that container to be able to reuse that name.
+Error response from daemon: Conflict. The container name "/hertz_reg_etcd3" is already in use by container "a45f6d763e04a5808a1c08d46683f1547bd63925a827ea25687e32253f9ef8cf". You have to remove (or rename) that container to be able to reuse that name.
