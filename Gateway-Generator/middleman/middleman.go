@@ -14,7 +14,7 @@ func main() {
 	fmt.Printf("Starting middle server")
 
 	// cmd := exec.Command("nohup", "./gateway", arg)
-	cmd := exec.Command("./server")
+	cmd := exec.Command("bash", "-c", "nohup ./server "+" > /dev/null 2>&1 & disown")
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
