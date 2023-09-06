@@ -409,9 +409,9 @@ app.post("/start", async (req, res) => {
   );
 
   if (osType === "win32") {
-    child = spawn("./server", { cwd: midman, detached: true });
+    child = spawn("./middlemanr", { cwd: midman, detached: true });
   } else {
-    child = spawn("./server", { cwd: midman, detached: true  });
+    child = spawn("./middleman", { cwd: midman, detached: true  });
   }
 
   child.on("error", (error) => {
@@ -428,9 +428,17 @@ app.post("/start", async (req, res) => {
     console.error(data.toString());
   });
 
-  setTimeout(() => {
-    res.status(200).json({ outcome: "Gateway Started" });
-}, 1000);
+  
+  child.on("close", (code) => {
+    if (code == 0) {
+      console.log("Middleman Started");
+      res.status(200).json({ outcome: "Gateway Started" });
+    } else {
+      console.log("Error Starting Gateway");
+      // res.status(500).json({ outcome: "Error Stopping Gateway" });
+      throw new Error("Error Starting Gateway")
+    }
+  })
 
   
 

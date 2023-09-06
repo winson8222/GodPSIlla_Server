@@ -23,3 +23,5 @@ use ./nstop
 use ./nupdate
 
 use ./del
+
+use ./middleman
