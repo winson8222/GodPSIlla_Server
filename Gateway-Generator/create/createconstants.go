@@ -101,39 +101,64 @@ func CreateConstant(services Services) {
 
 // Configure the Nginx conf file based on the services and methods routes
 func NginxConfig(services Services) {
+	// 	configString := `
+	// events {
+	// 	worker_connections  1024;
+	// }
+
+	// http {
+	// 	upstream gateway {
+	// 		server 127.0.0.1:8888;
+	// 		server 127.0.0.1:8889;
+	// 		server 127.0.0.1:8890;
+	// 	}
+
+	// 	server {
+	// 		listen 80;
+	// {{- range .Service_Constants }}
+	// {{- $serviceName := .ServiceName }}
+	// {{- range .Methods }}
+	// 		location /{{ $serviceName }}/{{ .MethodName }} {
+	// 			proxy_pass http://gateway/{{ $serviceName }}/{{ .MethodName }};
+	// 		}
+	// {{- end }}
+	// {{- end }}
+	// 		location /ping {
+	// 			proxy_pass http://gateway/ping;
+	// 		}
+
+	// 		location /PSI {
+	// 			proxy_pass http://gateway/PSI;
+	// 		}
+	// 	}
+	// }
+	// `
+
 	configString := `
-events {
-	worker_connections  1024;
-}
-
-http {
-	upstream gateway {
-		server 127.0.0.1:8888;
-		server 127.0.0.1:8889;
-		server 127.0.0.1:8890;
+	events {
+		worker_connections  1024;
 	}
 
-	server {
-		listen 80;
-{{- range .Service_Constants }}
-{{- $serviceName := .ServiceName }}
-{{- range .Methods }}
-		location /{{ $serviceName }}/{{ .MethodName }} {
-			proxy_pass http://gateway/{{ $serviceName }}/{{ .MethodName }};
-		}
-{{- end }}
-{{- end }}
-		location /ping {
-			proxy_pass http://gateway/ping;
+	http {
+		upstream gateway {
+			server 127.0.0.1:8888;
+			server 127.0.0.1:8889;
+			server 127.0.0.1:8890;
 		}
 
-		location /PSI {
-			proxy_pass http://gateway/PSI;
+		server {
+			listen 80;
+
+			location /ping {
+				proxy_pass http://gateway/ping;
+			}
+
+			location /PSI {
+				proxy_pass http://gateway/PSI;
+			}
 		}
 	}
-}
-`
-
+	`
 	// Extract the port from GATEWAY_URL
 	_, port, err := net.SplitHostPort(services.GATEWAY_URL)
 	if err != nil {
