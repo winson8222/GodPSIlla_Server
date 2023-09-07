@@ -83,7 +83,6 @@ func {{ .ServiceName }}GenericClient() genericclient.Client {
 	// Method template
 	methodTemplate := `
 func Do{{ title .MethodName }}(ctx context.Context, cli genericclient.Client, req string) (interface{}, error) {
-	fmt.Print(req)
 	resp, err := cli.GenericCall(ctx, "{{ .MethodName }}", req)
 
 	if err != nil {
