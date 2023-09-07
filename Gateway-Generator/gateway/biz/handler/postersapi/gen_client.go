@@ -6,7 +6,6 @@ import (
 	"gateway/constants"
 	"log"
 	"strings"
-	"fmt"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/genericclient"
 	"github.com/cloudwego/kitex/pkg/generic"
@@ -57,7 +56,6 @@ func PosterServiceGenericClient() genericclient.Client {
 
 
 func DoGetuniqueusernames(ctx context.Context, cli genericclient.Client, req string) (interface{}, error) {
-	fmt.Print(req)
 	resp, err := cli.GenericCall(ctx, "getuniqueusernames", req)
 
 	if err != nil {

@@ -1,0 +1,25 @@
+syntax = "proto3";
+package model;
+// The greeting service definition.
+option go_package = "./";
+
+//Request contains encrypted elems and services queried for intersection
+message Request {
+  repeated bytes encryptedElems = 1;
+
+  message ServiceInfo {
+    string serviceName = 1;
+    string methodName = 2;
+  }
+  repeated ServiceInfo svcInfo = 2;
+}
+
+//Response contains data client can use to find intersection size
+message Response {
+  repeated bytes doubleEncryptedElems = 1;
+  repeated bytes encryptedServerElems = 2;
+}
+
+service Middleman {
+  rpc PSI (Request) returns (Response) {}
+}

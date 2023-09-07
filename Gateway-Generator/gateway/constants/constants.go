@@ -18,8 +18,3 @@ package constants
 		POSTERSERVICE_NAME         = "PosterService" //name registered with svc registry as rpcendpoint
 	)
 	
-	const (
-		FILEPATH_TO_VIEWERSERVICE  = "../idl/viewers.thrift"
-		VIEWERSERVICE_NAME         = "ViewerService" //name registered with svc registry as rpcendpoint
-	)
-	

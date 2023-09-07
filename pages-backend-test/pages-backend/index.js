@@ -335,9 +335,11 @@ app.post("/start", async (req, res) => {
     let child = spawn("./serverstart", [8888, 8889, 8890], { cwd: parentDirServerStart });
 
     child.on("error", (error) => {
-      console.error("Error starting child process:", error);
-      // res.status(500).json({outcome: "Error Starting Child Process",error: error.message,});
-      throw new Error(error.message);
+      console.error("Error starting servers:", error);
+      if (!res.headersSent) {
+      res.status(500).json({outcome: "Error Starting Child Process",error: error.message,});
+      }
+      return
     });
 
     child.stdout.on("data", (data) => {
@@ -354,8 +356,10 @@ app.post("/start", async (req, res) => {
         // res.status(200).json({outcome: 'Gateway Started' }) cannot set headers yet
       } else {
         console.log("Error Starting Servers");
-        // res.status(500).json({ outcome: "Error Starting Servers" });
-        throw new Error("Error Starting Servers");
+        if (!res.headersSent) {
+        res.status(500).json({ outcome: "Error Starting Servers" });
+        }
+        return
       }
     });
 
@@ -377,9 +381,11 @@ app.post("/start", async (req, res) => {
     }
 
     child.on("error", (error) => {
-      console.error("Error starting child process:", error);
-      // res.status(500).json({outcome: "Error Starting Child Process",error: error.message,});
-        throw new Error(error.message);
+      console.error("Error starting nginx:", error);
+      if (!res.headersSent) {
+        res.status(500).json({outcome: "Error Starting Nginx",error: error.message,});
+      }
+        return
     });
 
     child.stdout.on("data", (data) => {
@@ -392,11 +398,16 @@ app.post("/start", async (req, res) => {
 
     child.on("close", (code) => {
       if (code == 0) {
-        console.log("Gateway Started successfully");
+        console.log("Nginx started successfully");
 
       } else {
         console.log("Error generating Gateway");
-        throw new Error("Error Starting Gateway");
+        try {
+          throw new Error("Error Starting Gateway");
+        } catch (err) {
+          console.error(err);
+        }
+        
       }
     });
   
@@ -409,15 +420,17 @@ app.post("/start", async (req, res) => {
   );
 
   if (osType === "win32") {
-    child = spawn("./middlemanr", { cwd: midman, detached: true });
+    child = spawn("./middleman.exe", { cwd: midman, detached: true });
   } else {
     child = spawn("./middleman", { cwd: midman, detached: true  });
   }
 
   child.on("error", (error) => {
-    console.error("Error starting child process:", error);
-    // res.status(500).json({outcome: "Error Starting Child Process",error: error.message,});
-      throw new Error(error.message);
+    console.error("Error starting middleman:", error);
+    if (!res.headersSent) {
+      res.status(500).json({outcome: "Error Starting Middleman",error: error.message,});
+    }
+      return
   });
 
   child.stdout.on("data", (data) => {
@@ -432,11 +445,15 @@ app.post("/start", async (req, res) => {
   child.on("close", (code) => {
     if (code == 0) {
       console.log("Middleman Started");
+      if (!res.headersSent) {
       res.status(200).json({ outcome: "Gateway Started" });
+      }
     } else {
       console.log("Error Starting Gateway");
-      // res.status(500).json({ outcome: "Error Stopping Gateway" });
-      throw new Error("Error Starting Gateway")
+      if (!res.headersSent) {
+      res.status(500).json({ outcome: "Error Stopping Gateway" });
+      }
+      return
     }
   })
 
@@ -444,7 +461,6 @@ app.post("/start", async (req, res) => {
 
 } catch (err) {
   console.error("Error in route:", err);
-  res.status(500).json({ outcome: "Error in route", error: err.message });
   return;
 }
 
@@ -485,8 +501,10 @@ app.post("/stop", async (req, res) => {
 
     child.on("error", (error) => {
       console.error("Error stopping child process:", error);
-      // res.status(500).json({outcome: "Error Stopping Child Process",error: error.message,});
-      throw new Error(error.message)
+      if (!res.headersSent) {
+      res.status(500).json({outcome: "Error Stopping Child Process",error: error.message,});
+      }
+      return
     });
 
     child.stdout.on("data", (data) => {
@@ -500,11 +518,12 @@ app.post("/stop", async (req, res) => {
     child.on("close", (code) => {
       if (code == 0) {
         console.log("Servers Stopped");
-        // res.status(200).json({outcome: 'Servers Stopped'}) cannot set headers yet
       } else {
         console.log("Error Stopping Servers");
-        // res.status(500).json({ outcome: "Error Stopping Servers" });
-        throw new Error("Error Stopping Servers")
+        if (!res.headersSent) {
+        res.status(500).json({ outcome: "Error Stopping Servers" });
+        }
+        
       }
     });
 
@@ -524,8 +543,10 @@ app.post("/stop", async (req, res) => {
 
     child.on("error", (error) => {
       console.error("Error stopping child process:", error);
-      // res.status(500).json({outcome: "Error Stopping Child Process",error: error.message,});
-      throw new Error(error.message)
+      if (!res.headersSent) {
+      res.status(500).json({outcome: "Error Stopping Child Process",error: error.message,});
+      }
+      return
     });
 
     child.stdout.on("data", (data) => {
@@ -540,11 +561,15 @@ app.post("/stop", async (req, res) => {
     child.on("close", (code) => {
       if (code == 0) {
         console.log("Gateway Stopped");
+        if (!res.headersSent) {
         res.status(200).json({ outcome: "Gateway Stopped" });
+        }
       } else {
         console.log("Error Stopping Gateway");
-        // res.status(500).json({ outcome: "Error Stopping Gateway" });
-        throw new Error("Error Stopping Gateway")
+        if (!res.headersSent) {
+        res.status(500).json({ outcome: "Error Stopping Gateway" });
+        }
+      
       }
     })
 
@@ -565,8 +590,10 @@ app.post("/update", async (req, res) => {
     const form = new formidable.IncomingForm();
     form.parse(req, async function (err, fields) {
       if (err) {
-        // res.status(400).json({ error: err.message });
-        throw new Error(err.message)
+        if (!res.headersSent) {
+        res.status(400).json({ error: err.message });
+        }
+    
       }
       const { url, lb } = fields;
       console.log("The url for update is: " + url)
@@ -591,8 +618,10 @@ app.post("/update", async (req, res) => {
 
       child.on("error", (error) => {
         console.error("Error stopping child process:", error);
-        // res.status(500).json({outcome: "Error Stopping Child Process",error: error.message,});
-        throw new Error(error.message)
+        if (!res.headersSent) {
+        res.status(500).json({outcome: "Error Stopping Child Process",error: error.message,});
+        }
+        return
       });
 
       child.stdout.on("data", (data) => {
@@ -606,17 +635,23 @@ app.post("/update", async (req, res) => {
       child.on("close", (code) => {
         if (code == 0) {
           console.log("Gateway Updated");
+          if (!res.headersSent) {
           res.status(200).json({ outcome: "Gateway Updated" });
+          }
         } else {
           console.log("Error Updating Gateway");
-          // res.status(400).json({ outcome: "Error Updating Gateway" });
-          throw new Error("Error Updating Gateway")
+          if (!res.headersSent) {
+          res.status(400).json({ outcome: "Error Updating Gateway" });
+          }
+          return
         }
       });
     });
   } catch (err) {
     console.log(err);
+    if (!res.headersSent) {
     res.status(500).json({ outcome: "Error Updating Gateway", error: err.message });
+    }
   }
 });
 
@@ -647,8 +682,10 @@ app.post("/gen", async (req, res) => {
 
       child.on("error", (error) => {
         console.error("Error stopping child process:", error);
-        // res.status(500).json({outcome: "Error Stopping Child Process",error: error.message,});
-        throw new Error(error.message);
+        if (!res.headersSent) {
+        res.status(500).json({outcome: "Error Stopping Child Process",error: error.message,});
+        }
+        return
       });
 
       child.stdout.on("data", (data) => {
@@ -662,17 +699,23 @@ app.post("/gen", async (req, res) => {
       child.on("close", (code) => {
         if (code == 0) {
           console.log("Gateway generated successfully");
+          if (!res.headersSent) {
           res.status(200).json({ outcome: "Gateway Generated" });
+          }
         } else {
           console.log("Error generating Gateway");
-          // res.status(400).json({ outcome: "Error Generating Gateway" });
-          throw new Error("Error Generating Gateway");
+          if (!res.headersSent) {
+          res.status(400).json({ outcome: "Error Generating Gateway" });
+          }
+          return
         }
       });
     });
   } catch (error) {
     console.log(error)
+    if (!res.headersSent) {
     res.status(400).json({ outcome: "Error Generating Gateway", error: error.message });
+    }
   }
 });
 
@@ -698,8 +741,8 @@ app.post("/del", async (req, res) => {
 
     child.on("error", (error) => {
       console.error("Error stopping child process:", error);
-      // res.status(500).json({outcome: "Error Stopping Child Process",error: error.message,});
-      throw new Error(error.message)
+      res.status(500).json({outcome: "Error Stopping Child Process",error: error.message,});
+      return
     });
 
     child.stdout.on("data", (data) => {
@@ -713,16 +756,22 @@ app.post("/del", async (req, res) => {
     child.on("close", (code) => {
       if (code == 0) {
         console.log("Gateway Deleted");
+        if (!res.headersSent) {
         return res.status(200).json({ outcome: "Gateway Deleted" });
+        }
       } else {
         console.log("Error Deleting Gateway");
-        // res.status(400).json({ outcome: "Error Deleting Gateway" });
-        throw new Error("Error Deleting Gateway");
+        if (!res.headersSent) {
+        res.status(400).json({ outcome: "Error Deleting Gateway" });
+        }
+        return
       }
     });
   } catch (err) {
     console.log(err)
+    if (!res.headersSent) {
     return res.status(500).json({ outcome: "Error Deleting Gateway" });
+    }
   }
 });
 

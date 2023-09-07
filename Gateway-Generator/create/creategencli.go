@@ -29,7 +29,6 @@ import (
 	"{{ .GatewayName }}/constants"
 	"log"
 	"strings"
-	"fmt"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/genericclient"
 	"github.com/cloudwego/kitex/pkg/generic"

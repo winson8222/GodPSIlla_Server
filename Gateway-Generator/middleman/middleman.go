@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os/exec"
+	"syscall"
 	"time"
 )
 
@@ -15,7 +16,9 @@ func main() {
 
 	// cmd := exec.Command("nohup", "./gateway", arg)
 	// cmd := exec.Command("bash", "-c", "nohup ./server "+" > /dev/null 2>&1 & disown")
-	cmd := exec.Command("./server")
+	cmd := exec.Command("./server.exe")
+
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {

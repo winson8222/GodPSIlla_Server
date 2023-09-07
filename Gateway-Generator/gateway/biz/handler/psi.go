@@ -5,7 +5,6 @@ package handler
 		"encoding/json"
 		"fmt"
 		"gateway/biz/handler/postersapi"
-	"gateway/biz/handler/viewersapi"
 	
 		"github.com/cloudwego/hertz/pkg/app"
 		"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -16,9 +15,6 @@ package handler
 		
 	functionMap["PosterService"] = map[string]func(ctx context.Context, c *app.RequestContext){
 		"getuniqueusernames": postersapi.Getuniqueusernames,
-	}
-	functionMap["ViewerService"] = map[string]func(ctx context.Context, c *app.RequestContext){
-		"getuniqueviewernames": viewersapi.Getuniqueviewernames,
 	}
 	}
 	func PSI(ctx context.Context, c *app.RequestContext) {

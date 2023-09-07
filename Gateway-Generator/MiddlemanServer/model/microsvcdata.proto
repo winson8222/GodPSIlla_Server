@@ -1,0 +1,9 @@
+syntax = "proto3";
+option go_package = "./";
+package model;
+
+// Request message with data to send to the server
+message MicrosvcDataRequest {
+  // Add your data fields here
+  repeated string intersectionElems = 1;
+}

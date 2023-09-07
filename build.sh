@@ -30,7 +30,8 @@ fi
 if [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "msys" ]] || [[ "$(uname -s)" == "MINGW"* ]]; then
     echo "Please enter your nginx path:"
     read arg2
-    if [[ ! "$arg2" =~ ^[A-Za-z]:/ ]]; then
+    echo "$arg2"
+    if [[ ! "$arg2" =~ ^[A-Za-z]:\\ ]]; then
         echo "Please provide an absolute path."
         exit 1
     fi
@@ -66,7 +67,8 @@ if docker ps -a --format '{{.Names}}' | grep -q "^${container_name}$"; then
     # Check if the container is not running
     if ! docker ps --format '{{.Names}}' | grep -q "^${container_name}$"; then
         # Start the existing container
-        docker start ${container_name}
+        
+        sleep 3
     else
         # Container is already running
         echo "Container ${container_name} is already running."
@@ -74,7 +76,9 @@ if docker ps -a --format '{{.Names}}' | grep -q "^${container_name}$"; then
 else
     # Run the container if it doesn't exist
     echo "Creating and starting the ${container_name} container..."
-    docker run --name ${container_name} -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=mydatabase -p 5432:5432 postgres
+    docker run --name ${container_name} -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=mydatabase -p 5432:5432 postgres &
+    docker stop ${container_name}
+    sleep 3
 fi
 
 
