@@ -9,6 +9,8 @@ else
     sleep 5
 fi
 
+docker start godzilla
+
 # Check if the operating system is macOS or Linux (assuming you're using this on macOS, but it will also work on Linux)
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Running on macOS..."

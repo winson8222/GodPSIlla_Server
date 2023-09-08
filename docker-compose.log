@@ -1,6 +1,4 @@
- Network gw_with_build_merge_etcd-net  Creating
- Network gw_with_build_merge_etcd-net  Created
- Container hertz_reg_etcd1  Creating
  Container hertz_reg_etcd2  Creating
  Container hertz_reg_etcd3  Creating
-Error response from daemon: Conflict. The container name "/hertz_reg_etcd1" is already in use by container "0e61481ad011b96dd91490857a08592d20802bce2a06c0732cb5f80aa025d5d6". You have to remove (or rename) that container to be able to reuse that name.
+ Container hertz_reg_etcd1  Creating
+Error response from daemon: Conflict. The container name "/hertz_reg_etcd3" is already in use by container "327cd529e919fd7228c56716331d9a17a72d09719375e7e92a1d42abbbaf0d2a". You have to remove (or rename) that container to be able to reuse that name.

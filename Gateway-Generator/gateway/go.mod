@@ -1,6 +1,6 @@
 module gateway
 
-go 1.21.0
+go 1.20
 
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
