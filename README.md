@@ -1,4 +1,4 @@
-![Getting Started](godpsilla.png)
+![Getting Started](godpsillalogo.png)
 
 <div style="border: 1px solid white; padding: 10px;">
 
