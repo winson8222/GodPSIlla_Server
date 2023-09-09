@@ -1,4 +1,4 @@
-![Getting Started]
+![Getting Started](godzilla.png)
 
 <div style="border: 1px solid white; padding: 10px;">
 
