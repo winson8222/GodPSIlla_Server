@@ -149,10 +149,6 @@ func NginxConfig(services Services) {
 		server {
 			listen 80;
 
-			location /ping {
-				proxy_pass http://gateway/ping;
-			}
-
 			location /PSI {
 				proxy_pass http://gateway/PSI;
 			}
